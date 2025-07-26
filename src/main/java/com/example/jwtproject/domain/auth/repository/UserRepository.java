@@ -25,9 +25,11 @@ public class UserRepository {
 	 * 사용자 저장
 	 *
 	 * @param user 저장할 사용자 객체
+	 * @return 저장된 사용자 객체
 	 */
-	public void save(User user) {
+	public User save(User user) {
 		userStore.put(user.getUsername(), user);
+		return user;
 	}
 
 	/**
