@@ -4,12 +4,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.springframework.stereotype.Repository;
+
 import com.example.jwtproject.domain.auth.model.User;
 
 /**
  * 메모리 기반의 사용자 저장소 클래스
  * 실제 데이터베이스 없이 HashMap을 이용해 사용자 정보를 저장 및 조회
  */
+@Repository
 public class UserRepository {
 
 	/**
