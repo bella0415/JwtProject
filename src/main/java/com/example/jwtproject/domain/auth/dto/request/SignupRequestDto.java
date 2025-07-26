@@ -26,4 +26,10 @@ public class SignupRequestDto {
 	 */
 	@NotBlank(message = "닉네임은 필수 입력값입니다.")
 	private String nickname;
+
+	/**
+	 * 사용자 권한 (USER 또는 ADMIN)
+	 * 기본값은 USER
+	 */
+	private String role = "USER"; // 입력 안 해도 USER로 자동 세팅됨
 }
