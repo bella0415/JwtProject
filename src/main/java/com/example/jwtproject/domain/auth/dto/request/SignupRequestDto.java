@@ -32,4 +32,12 @@ public class SignupRequestDto {
 	 * 기본값은 USER
 	 */
 	private String role = "USER"; // 입력 안 해도 USER로 자동 세팅됨
+
+	// 테스트 및 서비스용 생성자 추가
+	public SignupRequestDto(String username, String password, String nickname, String role) {
+		this.username = username;
+		this.password = password;
+		this.nickname = nickname;
+		this.role = role;
+	}
 }

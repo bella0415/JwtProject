@@ -20,4 +20,10 @@ public class LoginRequestDto {
 	 */
 	@NotBlank(message = "비밀번호는 필수 입력값입니다.")
 	private String password;
+
+	// 테스트 및 서비스용 생성자 추가
+	public LoginRequestDto(String username, String password) {
+		this.username = username;
+		this.password = password;
+	}
 }
