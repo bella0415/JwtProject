@@ -1,34 +1,59 @@
 package com.example.jwtproject.global.config;
 
+import com.example.jwtproject.global.filter.JwtFilter;
+import com.example.jwtproject.global.handler.CustomAccessDeniedHandler;
+import com.example.jwtproject.global.handler.CustomAuthenticationEntryPoint;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
- * Spring Security의 HTTP 보안 설정을 정의하는 클래스
+ * Spring Security 설정 클래스
  */
 @Configuration
+@RequiredArgsConstructor
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
+	private final JwtUtil jwtUtil;
+	private final CustomAccessDeniedHandler accessDeniedHandler;
+	private final CustomAuthenticationEntryPoint authenticationEntryPoint;
+
 	/**
-	 * 인증/인가 설정 필터 체인
-	 *
-	 * @param http HttpSecurity 객체
-	 * @return SecurityFilterChain
-	 * @throws Exception 설정 실패 시 예외 발생
+	 * 시큐리티 필터 체인 설정
 	 */
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
 			.csrf(csrf -> csrf.disable())
-			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/signup").permitAll()  // 회원가입은 누구나 가능
-				.anyRequest().authenticated()           // 나머지는 인증 필요
+			.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			.authorizeHttpRequests(authz -> authz
+				.requestMatchers("/signup", "/login").permitAll()
+				.anyRequest().authenticated()
 			)
-			.httpBasic(Customizer.withDefaults()); // 기본 인증 비활성화 가능 (임시)
+			.exceptionHandling(ex -> ex
+				.authenticationEntryPoint(authenticationEntryPoint) // 인증 안 된 사용자
+				.accessDeniedHandler(accessDeniedHandler) // 권한 부족 사용자
+			)
+			.addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
+	}
+
+	/**
+	 * 비밀번호 암호화를 위한 PasswordEncoder Bean 등록
+	 *
+	 * @return BCryptPasswordEncoder 인스턴스
+	 */
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
 	}
 }
