@@ -1,6 +1,5 @@
 package com.example.jwtproject.domain.auth.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
@@ -28,40 +27,29 @@ public class User {
 	private final String nickname;
 
 	/**
-	 * 사용자 역할 목록 (USER, ADMIN)
+	 * 사용자 역할 (USER 또는 ADMIN)
 	 */
-	private final List<Role> roles = new ArrayList<>();
+	private Role role;
 
 	/**
-	 * User 생성자 - 기본값
+	 * 사용자 생성자 (역할 포함)
 	 *
 	 * @param username 사용자 ID
 	 * @param password 암호화된 비밀번호
 	 * @param nickname 닉네임
+	 * @param role     사용자 권한
 	 */
-	public User(String username, String password, String nickname) {
+	public User(String username, String password, String nickname, Role role) {
 		this.username = username;
 		this.password = password;
 		this.nickname = nickname;
-		this.roles.add(Role.USER); // 기본 권한
+		this.role = role;
 	}
 
 	/**
-	 * 사용자에게 관리자(ADMIN) 권한을 부여
+	 * 사용자에게 관리자 권한을 부여한다.
 	 */
 	public void grantAdminRole() {
-		if (!this.roles.contains(Role.ADMIN)) {
-			this.roles.add(Role.ADMIN);
-		}
-	}
-
-	/**
-	 * 사용자가 특정 권한을 보유하고 있는지 확인
-	 *
-	 * @param role 확인할 역할
-	 * @return 보유 여부
-	 */
-	public boolean hasRole(Role role) {
-		return roles.contains(role);
+		this.role = Role.ADMIN;
 	}
 }
