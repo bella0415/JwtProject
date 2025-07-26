@@ -1,16 +1,12 @@
 package com.example.jwtproject.domain.auth.dto.response;
 
-import java.util.List;
-
-import com.example.jwtproject.domain.auth.model.Role;
-import lombok.AllArgsConstructor;
+import com.example.jwtproject.domain.auth.model.User;
 import lombok.Getter;
 
 /**
- * 회원가입 성공 시 반환되는 응답 DTO 클래스
+ * 회원가입 및 관리자 권한 부여 응답 DTO
  */
 @Getter
-@AllArgsConstructor
 public class SignupResponseDto {
 
 	/**
@@ -24,7 +20,34 @@ public class SignupResponseDto {
 	private final String nickname;
 
 	/**
-	 * 사용자 역할 목록
+	 * 사용자 권한 (예: USER, ADMIN)
 	 */
-	private final List<Role> roles;
+	private final String role;
+
+	/**
+	 * SignupResponseDto 생성자
+	 *
+	 * @param username 사용자 ID
+	 * @param nickname 사용자 닉네임
+	 * @param role     사용자 역할 (문자열 형태)
+	 */
+	public SignupResponseDto(String username, String nickname, String role) {
+		this.username = username;
+		this.nickname = nickname;
+		this.role = role;
+	}
+
+	/**
+	 * User 객체로부터 SignupResponseDto 생성
+	 *
+	 * @param user 사용자 엔티티
+	 * @return SignupResponseDto 객체
+	 */
+	public static SignupResponseDto from(User user) {
+		return new SignupResponseDto(
+			user.getUsername(),
+			user.getNickname(),
+			user.getRole().name() // Enum → 문자열
+		);
+	}
 }
