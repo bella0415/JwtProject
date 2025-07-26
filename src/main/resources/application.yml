@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: JwtProject
+
+jwt:
+  secretKey: ThisIsASecretKeyThatIsLongEnoughToBeSecureForJwtHMAC256
+  accessToken:
+    time: 7200000 # 2시간 (밀리초)
+  refreshToken:
+    time: 604800000 # 7일 (밀리초)
