@@ -76,4 +76,9 @@ public class JwtUtil {
 		}
 		return null;
 	}
+
+	public String createToken(String username, String role) {
+		// 테스트용 더미 토큰
+		return "Bearer dummy-token-for-" + username + "-" + role;
+	}
 }
