@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * JWT 생성, 파싱, 검증 등을 처리하는 유틸리티 클래스
@@ -111,14 +112,14 @@ public class JwtUtil {
 	 * HTTP 요청 헤더에서 JWT 추출
 	 *
 	 * @param request HTTP 요청
-	 * @return JWT 토큰 문자열 (없으면 null)
+	 * @return JWT 토큰 문자열을 Optional로 래핑
 	 */
-	public String resolveToken(HttpServletRequest request) {
+	public Optional<String> resolveToken(HttpServletRequest request) {
 		String bearer = request.getHeader("Authorization");
 		if (StringUtils.hasText(bearer) && bearer.startsWith(BEARER_PREFIX)) {
-			return bearer.substring(BEARER_PREFIX.length());
+			return Optional.of(bearer.substring(BEARER_PREFIX.length()));
 		}
-		return null;
+		return Optional.empty();
 	}
 
 	/**
