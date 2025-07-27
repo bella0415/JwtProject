@@ -41,8 +41,7 @@ public class AuthService {
 
 		String encryptedPassword = passwordEncoder.encode(request.getPassword());
 
-		// 요청에서 Role 문자열을 Role Enum으로 변환
-		Role role = Role.valueOf(request.getRole().toUpperCase().trim());
+		Role role = Role.from(request.getRole());
 
 		User newUser = new User(
 			request.getUsername(),
