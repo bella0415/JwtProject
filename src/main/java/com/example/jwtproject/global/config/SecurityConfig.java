@@ -35,12 +35,20 @@ public class SecurityConfig {
 			.csrf(csrf -> csrf.disable())
 			.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(authz -> authz
-				.requestMatchers("/signup", "/login").permitAll()
+				.requestMatchers(
+					"/signup",
+					"/login",
+					"/swagger-ui/**",
+					"/v3/api-docs/**",
+					"/swagger-resources/**",
+					"/swagger-ui.html",
+					"/webjars/**"
+				).permitAll()
 				.anyRequest().authenticated()
 			)
 			.exceptionHandling(ex -> ex
-				.authenticationEntryPoint(authenticationEntryPoint) // 인증 안 된 사용자
-				.accessDeniedHandler(accessDeniedHandler) // 권한 부족 사용자
+				.authenticationEntryPoint(authenticationEntryPoint)
+				.accessDeniedHandler(accessDeniedHandler)
 			)
 			.addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
