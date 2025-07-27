@@ -8,3 +8,9 @@ jwt:
     time: 7200000 # 2시간 (밀리초)
   refreshToken:
     time: 604800000 # 7일 (밀리초)
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
