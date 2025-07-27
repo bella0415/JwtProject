@@ -21,6 +21,7 @@ import java.util.Collections;
  * - 요청 헤더에서 토큰 추출
  * - 토큰 유효성 검사
  * - 인증 객체 생성 및 SecurityContext에 등록
+ * - Swagger 관련 경로는 필터 건너뜀
  */
 public class JwtFilter extends OncePerRequestFilter {
 
@@ -33,6 +34,14 @@ public class JwtFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 		throws ServletException, IOException {
+
+		String uri = request.getRequestURI();
+
+		// Swagger 관련 요청은 필터 제외
+		if (uri.startsWith("/v3/api-docs") || uri.startsWith("/swagger-ui") || uri.startsWith("/swagger-resources")) {
+			filterChain.doFilter(request, response);
+			return;
+		}
 
 		String token = jwtUtil.resolveToken(request);
 
