@@ -1,5 +1,6 @@
 package com.example.jwtproject.domain.auth.dto.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 /**
@@ -12,16 +13,19 @@ public class LoginResponseDto {
 	/**
 	 * 사용자 ID (username)
 	 */
+	@Schema(description = "사용자 ID", example = "user123")
 	private final String username;
 
 	/**
 	 * Access Token (JWT)
 	 */
+	@Schema(description = "Access Token", example = "eyJhbGciOiJIUzI1NiIsInR5cCI6...")
 	private final String accessToken;
 
 	/**
 	 * Refresh Token
 	 */
+	@Schema(description = "Refresh Token", example = "eyJhbGciOiJIUzI1NiIsInR5cCI6...")
 	private final String refreshToken;
 
 	/**

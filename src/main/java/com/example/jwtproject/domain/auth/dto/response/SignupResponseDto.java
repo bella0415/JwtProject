@@ -1,6 +1,8 @@
 package com.example.jwtproject.domain.auth.dto.response;
 
 import com.example.jwtproject.domain.auth.model.User;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 /**
@@ -12,16 +14,19 @@ public class SignupResponseDto {
 	/**
 	 * 사용자 아이디
 	 */
+	@Schema(description = "사용자 ID", example = "user123")
 	private final String username;
 
 	/**
 	 * 사용자 닉네임
 	 */
+	@Schema(description = "닉네임", example = "슬이")
 	private final String nickname;
 
 	/**
 	 * 사용자 권한 (예: USER, ADMIN)
 	 */
+	@Schema(description = "사용자 역할", example = "USER/ADMIN")
 	private final String role;
 
 	/**
