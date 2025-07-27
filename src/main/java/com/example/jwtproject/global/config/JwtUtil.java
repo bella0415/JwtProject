@@ -83,19 +83,16 @@ public class JwtUtil {
 	}
 
 	/**
-	 * JWT 유효성 검증
+	 * JWT 유효성 검증 (실패 시 예외 발생)
 	 *
 	 * @param token JWT 토큰
-	 * @return 유효 여부
+	 * @throws JwtException 검증 실패 시 발생
 	 */
-	public boolean validateToken(String token) {
-		try {
-			Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-			return true;
-		} catch (JwtException | IllegalArgumentException e) {
-			log.warn("JWT 검증 실패: {}", e.getMessage());
-			return false;
-		}
+	public void validateToken(String token) {
+		Jwts.parserBuilder()
+			.setSigningKey(key)
+			.build()
+			.parseClaimsJws(token);
 	}
 
 	/**
@@ -124,6 +121,7 @@ public class JwtUtil {
 
 	/**
 	 * 테스트용 더미 토큰 생성 메서드
+	 * 테스트코드에서 토큰 발급을 위한 임시 토큰 생성 메서드
 	 *
 	 * @param username 사용자 아이디
 	 * @param role     사용자 역할
