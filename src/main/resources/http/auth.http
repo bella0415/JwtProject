@@ -1,0 +1,60 @@
+### [1] 일반 회원가입
+POST http://localhost:8080/signup
+Content-Type: application/json
+
+{
+  "username": "user1",
+  "password": "password123",
+  "nickname": "유저일번",
+  "role": "USER"
+}
+
+### [2] 관리자 회원가입
+POST http://localhost:8080/signup
+Content-Type: application/json
+
+{
+  "username": "admin1",
+  "password": "admin123",
+  "nickname": "관리자일번",
+  "role": "ADMIN"
+}
+
+### [3] 로그인 (user1)
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+  "username": "user1",
+  "password": "password123"
+}
+
+### [4] 로그인 (admin1)
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+  "username": "admin1",
+  "password": "admin123"
+}
+
+### [5] 관리자 권한 부여 (admin1이 user2에게 권한 부여)
+PATCH http://localhost:8080/admin/users/user1/roles
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjEiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NTM1NDY0MjMsImV4cCI6MTc1MzU1MzYyM30.0f1oov8glNWW6iVd8yaKPTDnOkWaBDzDHpbFhjma4_g
+
+### [6] 일반 사용자가 관리자 권한 부여 시도 (403 Forbidden)
+PATCH http://localhost:8080/admin/users/user3/roles
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzUzNTQ2Mzk4LCJleHAiOjE3NTM1NTM1OTh9.M5tXIppgVttuJ8757D_Nn6eXBq3gJX7KRBPM_mXeZLk
+
+### [7] 유효하지 않은 토큰으로 요청 (401 Unauthorized)
+PATCH http://localhost:8080/admin/users/user3/roles
+Authorization: Bearer invalid.token.here
+
+
+### ✅ [8] 관리자 전용 테스트 페이지 (정상 접근)
+GET http://localhost:8080/admin/only
+Authorization: Bearer {{admin_token}}
+
+### ❌ [9] 관리자 전용 페이지 접근 시도 (권한 없음)
+GET http://localhost:8080/admin/only
+Authorization: Bearer {{user_token}}
