@@ -13,6 +13,9 @@ import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 
+/**
+ * JWT 생성, 파싱, 검증 등을 처리하는 유틸리티 클래스
+ */
 @Slf4j
 @Component
 public class JwtUtil {
@@ -30,31 +33,60 @@ public class JwtUtil {
 	@Value("${jwt.refreshToken.time}")
 	private long refreshTokenExpiration;
 
+	/**
+	 * secretKey를 Base64 디코딩하여 서명 키 초기화
+	 */
 	@PostConstruct
 	public void init() {
 		byte[] keyBytes = Base64.getDecoder().decode(secretKey);
 		key = Keys.hmacShaKeyFor(keyBytes);
 	}
 
+	/**
+	 * AccessToken 생성
+	 *
+	 * @param username 사용자 아이디
+	 * @param role     사용자 역할
+	 * @return 생성된 JWT AccessToken
+	 */
 	public String createAccessToken(String username, String role) {
-		return Jwts.builder()
-			.setSubject(username)
-			.claim("role", role)
-			.setIssuedAt(new Date())
-			.setExpiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
-			.signWith(key, signatureAlgorithm)
-			.compact();
+		return createToken(username, role, accessTokenExpiration);
 	}
 
+	/**
+	 * RefreshToken 생성
+	 *
+	 * @param username 사용자 아이디
+	 * @return 생성된 JWT RefreshToken
+	 */
 	public String createRefreshToken(String username) {
+		return createToken(username, null, refreshTokenExpiration);
+	}
+
+	/**
+	 * JWT 생성 공통 메서드
+	 *
+	 * @param username 사용자 아이디
+	 * @param role     역할 (null 허용)
+	 * @param expirationTime 만료 시간(ms)
+	 * @return 생성된 JWT
+	 */
+	private String createToken(String username, String role, long expirationTime) {
 		return Jwts.builder()
 			.setSubject(username)
+			.claim("role", role) // null인 경우 claim에 포함되지 않음
 			.setIssuedAt(new Date())
-			.setExpiration(new Date(System.currentTimeMillis() + refreshTokenExpiration))
+			.setExpiration(new Date(System.currentTimeMillis() + expirationTime))
 			.signWith(key, signatureAlgorithm)
 			.compact();
 	}
 
+	/**
+	 * JWT 유효성 검증
+	 *
+	 * @param token JWT 토큰
+	 * @return 유효 여부
+	 */
 	public boolean validateToken(String token) {
 		try {
 			Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
@@ -65,10 +97,22 @@ public class JwtUtil {
 		}
 	}
 
+	/**
+	 * JWT에서 Claims 추출
+	 *
+	 * @param token JWT 토큰
+	 * @return Claims 객체
+	 */
 	public Claims extractClaims(String token) {
 		return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
 	}
 
+	/**
+	 * HTTP 요청 헤더에서 JWT 추출
+	 *
+	 * @param request HTTP 요청
+	 * @return JWT 토큰 문자열 (없으면 null)
+	 */
 	public String resolveToken(HttpServletRequest request) {
 		String bearer = request.getHeader("Authorization");
 		if (StringUtils.hasText(bearer) && bearer.startsWith(BEARER_PREFIX)) {
@@ -77,8 +121,14 @@ public class JwtUtil {
 		return null;
 	}
 
-	public String createToken(String username, String role) {
-		// 테스트용 더미 토큰
+	/**
+	 * 테스트용 더미 토큰 생성 메서드
+	 *
+	 * @param username 사용자 아이디
+	 * @param role     사용자 역할
+	 * @return 더미 토큰 문자열
+	 */
+	public String createDummyToken(String username, String role) {
 		return "Bearer dummy-token-for-" + username + "-" + role;
 	}
 }
